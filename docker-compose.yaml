@@ -1,0 +1,91 @@
+version: "3"
+services:
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+
+  spark:
+    build:
+      context: .
+      dockerfile: docker_conf/spark.Dockerfile
+    image: bda-custom-spark:3
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "9080:8080"
+      - "18080:18080"
+    command:
+      - /bin/bash
+      - -x
+      - -o
+      - pipefail
+      - -c
+      - |
+        /opt/bitnami/scripts/spark/run.sh &
+        /opt/bitnami/spark/sbin/start-history-server.sh
+        wait
+    volumes:
+      - ./configs/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./scipts:/opt/bitnami/spark/dev/scripts
+      - application_log_path:/opt/bitnami/spark/logs
+    container_name: spark_master
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  spark-worker:
+    image: bda-custom-spark:3
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "4040-4042:4040"
+    command:
+      - /bin/bash
+      - -x
+      - -o
+      - pipefail
+      - -c
+      - |
+        /opt/bitnami/scripts/spark/run.sh &
+        sleep 10s
+        env | cat >> /home/spark_user/docker_env.txt
+        echo Spark123@ | sudo -S service ssh start
+        wait
+    volumes:
+      - ./configs/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./scipts:/opt/bitnami/spark/dev/scripts
+      - application_log_path:/opt/bitnami/spark/logs
+    depends_on:
+      - spark
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  application_log_path:
+    driver: local
