@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.6" />
+        <PackageReference Include="AWSSDK.Kinesis" Version="3.7.102.73" />
+        <PackageReference Include="AWSSDK.S3" Version="3.7.104.7" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+        <PackageReference Include="Hangfire.Core" Version="1.8.4" />
+        <PackageReference Include="Hangfire.AspNetCore" Version="1.8.4" />
+        <PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
+        <PackageReference Include="Hangfire.PostgreSql" Version="1.19.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BigDataAcademy.Model\BigDataAcademy.Model.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="Data\claimpro.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Data\claimwise.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Data\claimzone.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Data\insurwave.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Data\claimhub.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Data\claimify-claims.csv" />
+      <EmbeddedResource Include="Data\claimify-claims.csv" />
+      <None Remove="Data\claimify-exposure.csv" />
+      <EmbeddedResource Include="Data\claimify-exposure.csv" />
+      <None Remove="Data\claimify-motor.csv" />
+      <EmbeddedResource Include="Data\claimify-motor.csv" />
+    </ItemGroup>
+  
+</Project>

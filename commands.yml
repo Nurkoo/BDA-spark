@@ -1,1 +1,6 @@
 docker compose up --scale spark-worker=2 -d 
+docker compose stop
+
+
+[spark]
+spark-submit --master spark://spark:7077 scripts/sample_script.py

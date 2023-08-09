@@ -1,0 +1,8 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+/docker-compose/postgres-data/
+/.idea
+big-data-academy.sln.DotSettings.user
