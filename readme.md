@@ -43,6 +43,17 @@ Stage 3:
     * s3://bda-data-bucket/claim-zone/<execution_date>/<table_name>_part(part_number 1 - 5).json
 
 
+SPARK AWS SETTINGS
+
+spark._jsc.hadoopConfiguration().set("fs.s3a.access.key", "mykey")
+spark._jsc.hadoopConfiguration().set("fs.s3a.secret.key", "mysecret")
+spark._jsc.hadoopConfiguration().set("fs.s3a.path.style.access", "true")
+spark._jsc.hadoopConfiguration().set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+spark._jsc.hadoopConfiguration().set("com.amazonaws.services.s3.enableV4", "true")
+spark._jsc.hadoopConfiguration().set("fs.s3a.aws.credentials.provider","org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider",)
+spark._jsc.hadoopConfiguration().set("fs.s3a.endpoint", "http://localstack:4566")
+
+
 Stage 4:
 
     * Create a Spark job that reads all data for a claim table from three sources (AWS S3 paths) for a single day
