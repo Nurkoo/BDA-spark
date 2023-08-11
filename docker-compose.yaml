@@ -83,7 +83,7 @@ services:
         wait
     volumes:
       - ./configs/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
-      - ./../scipts:/opt/bitnami/spark/dev/scripts
+      - ./scipts:/opt/bitnami/spark/dev/scripts
       - application_log_path:/opt/bitnami/spark/logs
     hostname: spark
     extra_hosts:
