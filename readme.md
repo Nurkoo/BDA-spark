@@ -22,25 +22,22 @@ Stage 0:
 Stage 1:
 
     * Change the implementation of API reader for claim-hub
-    * write a method that reads the data 5 times
     * Each file should be written in AWS S3 (mocked by localsttack - available at https://localhost:4566)
-    * s3://bda-data-bucket/claim-hub/<execution_date>/<table_name>_part(part_number 1 - 5).json
+    * s3://bda-data-bucket/claim-hub/<execution_date>/<table_name>_part.json
 
 
 Stage 2:
 
     * Change the implementation of API reader for insure-wave
-    * write a method that reads the data 5 times
     * Each file should be written in AWS S3 (mocked by localsttack - available at https://localhost:4566)
-    * s3://bda-data-bucket/insure-wave/<execution_date>/<table_name>_part(part_number 1 - 5).json
+    * s3://bda-data-bucket/insure-wave/<execution_date>/<table_name>_part.json
 
 
 Stage 3:
 
     * Change the implementation of API reader for claim-zone
-    * write a method that reads the data 5 times
     * Each file should be written in AWS S3 (mocked by localsttack - available at https://localhost:4566)
-    * s3://bda-data-bucket/claim-zone/<execution_date>/<table_name>_part(part_number 1 - 5).json
+    * s3://bda-data-bucket/claim-zone/<execution_date>/<table_name>.json
 
 
 SPARK AWS SETTINGS
