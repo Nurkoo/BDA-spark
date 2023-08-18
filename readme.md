@@ -92,6 +92,10 @@ Stage 7:
     * print_folder_content - prints contents of the current folder
     * Tasks print_date and print_folder_content should be in one TaskGroup and executed in parallel
 
+Before using SparkSubmitOperators you need to specify spark_default connection in airflow
+
+![Airflow spark conn](imgs/airflow_spark_conn.png)
+
 Stage 8:
 
     * Write orchestration for Stages 1 - 6
