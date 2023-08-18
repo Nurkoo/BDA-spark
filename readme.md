@@ -82,3 +82,18 @@ Stage 6:
     * Remove duplicates
     * Add another column called "exec_date" and fill it with the date which was read from the AWS S3
     * Save final table in postgres
+
+
+Stage 7:
+    * Create simple DAG with EmptyOperatos and PythonOperators
+    * Start (emptyOperator) -> print_date (PythonOperator), print_folder_content (PythonOperator) -> end (emptyOperator)
+    * print_date - prints current date
+    * print_folder_content - prints contents of the current folder
+    * Tasks print_date and print_folder_content should be in one TaskGroup and executed in parallel
+
+Stage 8:
+    * Write orchestration for Stages 1 - 6
+    * Stages 1-3 in single TaskGroup called "Ingestion", executed in parallel
+    * Stages 4-6 in another TaskGroup called "Processing", executed in parallel
+    * 2nd task group should start only after all tasks from the first one are finished
+    * After 2nd task group should be a PythonOperator task which would check and print count of the tables in postgres
