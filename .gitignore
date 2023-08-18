@@ -6,3 +6,7 @@ riderModule.iml
 /docker-compose/postgres-data/
 /.idea
 big-data-academy.sln.DotSettings.user
+postgres-data
+.localstack
+.DS_Store
+logs/

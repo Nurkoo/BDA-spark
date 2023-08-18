@@ -1,0 +1,128 @@
+version: "3.8"
+services:
+  postgres:
+    container_name: postgres-db
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - "./postgres-data:/var/lib/postgresql/data"
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5050:80"
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:latest
+    restart: always
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-1
+      - DEBUG=1
+    volumes:
+      - "./.localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  big-data-academy-oauth:
+    container_name: big-data-academy-oauth
+    restart: always
+    image: mkilinski/big-data-academy-oauth:latest
+    ports:
+      - "5256:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+
+  big-data-academy-api:
+    container_name: big-data-academy-api
+    restart: always
+    image: mkilinski/big-data-academy-api:latest
+    ports:
+      - "5114:80"
+    depends_on:
+      - postgres
+      - localstack
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+
+  big-data-academy-spark:
+    build:
+      context: .
+      dockerfile: docker_conf/spark.Dockerfile
+    image: bda-custom-spark:3
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "9080:8080"
+      - "18080:18080"
+    command:
+      - /bin/bash
+      - -x
+      - -o
+      - pipefail
+      - -c
+      - |
+        /opt/bitnami/scripts/spark/run.sh &
+        /opt/bitnami/spark/sbin/start-history-server.sh
+        wait
+    volumes:
+      - ./configs/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./scipts:/opt/bitnami/spark/dev/scripts
+      - application_log_path:/opt/bitnami/spark/logs
+    hostname: spark
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  big-data-academy-spark-worker:
+    image: bda-custom-spark:3
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "4040-4042:4040"
+    command:
+      - /bin/bash
+      - -x
+      - -o
+      - pipefail
+      - -c
+      - |
+        /opt/bitnami/scripts/spark/run.sh &
+        sleep 10s
+        env | cat >> /home/spark_user/docker_env.txt
+        echo Spark123@ | sudo -S service ssh start
+        wait
+    volumes:
+      - ./configs/spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      - ./scipts:/opt/bitnami/spark/dev/scripts
+      - application_log_path:/opt/bitnami/spark/logs
+    depends_on:
+      - big-data-academy-spark
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  application_log_path:
+    driver: local
