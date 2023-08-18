@@ -2,7 +2,7 @@
 version: '3'
 x-airflow-common:
   &airflow-common
-  image: apache/airflow:latest
+  image: ${AIRFLOW_IMAGE_NAME:-bda_custom_airflow:2.5.0}
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
@@ -11,8 +11,7 @@ x-airflow-common:
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-    AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- pyspark apache-airflow-providers-apache-spark}
+    AIRFLOW__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth'
 
   volumes:
     - ./dags:/opt/airflow/dags
@@ -73,6 +72,10 @@ services:
 
   airflow-init:
     <<: *airflow-common
+    build:
+      context: .
+      dockerfile: docker_conf/airflow.Dockerfile
+    image: bda_custom_airflow:2.5.0
     entrypoint: /bin/bash
     # yamllint disable rule:line-length
     command:
