@@ -85,6 +85,7 @@ Stage 6:
 
 
 Stage 7:
+
     * Create simple DAG with EmptyOperatos and PythonOperators
     * Start (emptyOperator) -> print_date (PythonOperator), print_folder_content (PythonOperator) -> end (emptyOperator)
     * print_date - prints current date
@@ -92,6 +93,7 @@ Stage 7:
     * Tasks print_date and print_folder_content should be in one TaskGroup and executed in parallel
 
 Stage 8:
+
     * Write orchestration for Stages 1 - 6
     * Stages 1-3 in single TaskGroup called "Ingestion", executed in parallel
     * Stages 4-6 in another TaskGroup called "Processing", executed in parallel
